@@ -257,46 +257,6 @@ function observeReportNavigation() {
   document.querySelectorAll('.report-section[id]').forEach((section) => reportNavObserver.observe(section));
 }
 
-function parseCsv(text) {
-  return text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean).map((line) => {
-    const values = []; let value = ''; let quoted = false;
-    for (let index = 0; index < line.length; index++) {
-      const char = line[index];
-      if (char === '"' && line[index + 1] === '"') { value += '"'; index++; }
-      else if (char === '"') quoted = !quoted;
-      else if (char === ',' && !quoted) { values.push(value.trim()); value = ''; }
-      else value += char;
-    }
-    values.push(value.trim());
-    return values;
-  });
-}
-
-async function importCsvMetrics(event) {
-  const file = event.target.files?.[0];
-  if (!file) return;
-  const form = $('company-form');
-  try {
-    const rows = parseCsv(await file.text());
-    if (rows.length < 2) throw new Error('Use a CSV with a header and at least one value row.');
-    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const aliases = {
-      startingcash: 'startingCash', fixedmonthlycosts: 'fixedMonthlyCosts', variablecostperunit: 'variableCostPerUnit', averagedailyusage: 'averageDailyUsage', highvolumedailyusage: 'highVolumeDailyUsage', newcustomersperday: 'dailyCustomerArrivals', dailycustomerarrivals: 'dailyCustomerArrivals', supporthoursperweek: 'supportHoursPerWeek', customeracquisitioncost: 'customerAcquisitionCost', monthlychurnrate: 'monthlyChurnRate', paidconversionrate: 'paidConversionRate', paymentprocessingrate: 'paymentProcessingRate', refundrate: 'refundRate', failedtaskrate: 'failedTaskRate', targetgrossmargin: 'targetGrossMargin', currentpayingaccounts: 'startingPaidCustomers', startingpaidcustomers: 'startingPaidCustomers'
-    };
-    const header = rows[0].map(normalize); const metricColumn = header.findIndex((value) => /metric|field|name/.test(value)); const valueColumn = header.findIndex((value) => /value|amount|number/.test(value));
-    const pairs = metricColumn >= 0 && valueColumn >= 0 ? rows.slice(1).map((row) => [row[metricColumn], row[valueColumn]]) : header.map((name, index) => [name, rows[1][index]]);
-    let imported = 0;
-    pairs.forEach(([rawName, rawValue]) => {
-      const fieldName = aliases[normalize(rawName)]; const field = fieldName && form.elements.namedItem(fieldName);
-      if (!field || !Number.isFinite(Number(rawValue))) return;
-      field.value = String(rawValue); field.classList.remove('ai-filled'); suggestedFields.delete(fieldName); imported++;
-    });
-    if (!imported) throw new Error('No recognised metrics were found. Use columns such as “metric,value” or fields like “fixed monthly costs”.');
-    $('ai-status').textContent = `${imported} verified CSV metrics were imported. Review them before generating.`; $('ai-status').className = 'ai-status success';
-  } catch (error) { $('ai-status').textContent = error.message; $('ai-status').className = 'ai-status error'; }
-  event.target.value = '';
-}
-
 function downloadModelData() {
   if (!reportResult) return;
   const evidence = reportResult.report.evidence;
@@ -311,7 +271,7 @@ $('go-home').addEventListener('click', () => { company = null; reportResult = nu
 $('landing-create').addEventListener('click', () => openSetup(true)); $('landing-demo').addEventListener('click', loadDemo);
 $('edit-company').addEventListener('click', () => openSetup(false)); $('generate-report').addEventListener('click', generateReport);
 $('company-form').addEventListener('submit', saveCompany); $('ai-compile').addEventListener('click', organizeBrief);
-$('csv-import').addEventListener('change', importCsvMetrics); $('download-data').addEventListener('click', downloadModelData);
+$('download-data').addEventListener('click', downloadModelData);
 $('company-form').addEventListener('input', (event) => { const field = event.target; if (!field?.name) return; field.classList.remove('ai-filled'); suggestedFields.delete(field.name === 'subscriptionPriceElasticity' ? 'priceElasticity' : field.name); if (field.name.startsWith('plan')) suggestedFields.delete('plans'); if (field.name === 'unitName') updateUnitLabels(field.value); if (['industry', 'description', 'unitName', 'revenueModel'].includes(field.name)) updateIndustryModelVisibility(Object.fromEntries(new FormData($('company-form')))); $('suggested-note').hidden = suggestedFields.size === 0; });
 $('close-setup').addEventListener('click', () => $('setup-dialog').close()); $('cancel-setup').addEventListener('click', () => $('setup-dialog').close());
 renderShell();

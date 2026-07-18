@@ -5,7 +5,6 @@ Shadow Company turns a business brief into an editable, evidence-gated business 
 ## What it does
 
 - Organizes a written business brief into editable report inputs.
-- Lets users import recognised metrics from a CSV file.
 - Keeps assumptions, research, and calculated results visibly separate.
 - Generates a decision report, PDF, and downloadable model-data CSV.
 - Supports private administrator access to saved PDFs when Supabase storage is configured.

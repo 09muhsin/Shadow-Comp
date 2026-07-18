@@ -127,10 +127,9 @@ A good starting point is one thousand synthetic customers, a duration of one hun
     expect(high.checkValidity()).toBe(true);
   });
 
-  it("offers contextual inputs and CSV import before report generation", async () => {
+  it("offers contextual inputs before report generation", async () => {
     const html = await readFile(new URL("../web/index.html", import.meta.url), "utf8");
     const dom = new JSDOM(html);
-    expect(dom.window.document.querySelector("#csv-import")).not.toBeNull();
     expect(dom.window.document.querySelector('input[name="geography"]')).not.toBeNull();
     expect(dom.window.document.querySelector('select[name="currency"]')).not.toBeNull();
     expect(dom.window.document.querySelector('input[name="dataAsOf"]')).not.toBeNull();
