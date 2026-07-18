@@ -69,7 +69,7 @@ Do not commit API keys or deploy a personal Codex login session.
    ```text
    HOST=0.0.0.0
    AI_PROVIDER=codex
-   CODEX_API_KEY=your-server-side-codex-api-key
+   ALLOW_CODEX_ACCOUNT_SERVER=true
    ENABLE_WEB_RESEARCH=true
    RESEARCH_TIMEOUT_MS=90000
    ```
@@ -79,7 +79,7 @@ Do not commit API keys or deploy a personal Codex login session.
 7. Deploy, then use Railway's generated domain or add your custom domain.
 8. Open `https://YOUR-RAILWAY-DOMAIN/api/status` to confirm the server is running.
 
-For this Railway setup, the application runs in **CODEX API MODE**. Keep `CODEX_API_KEY` only in Railway variables, never in GitHub or browser code. The local `codex login` mode remains available for your hackathon demo.
+For this Railway setup, the application runs in **CODEX ACCOUNT MODE**. Add a Railway Volume mounted at `/root/.codex`, redeploy, then open the Railway Shell and run `codex login --device-auth`. Complete the device-code login in your browser. The Volume keeps the Codex account session across redeploys.
 
 ## Private report archive
 

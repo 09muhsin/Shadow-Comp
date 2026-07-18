@@ -46,7 +46,7 @@ Also keep the standard public-app variables:
 ```text
 HOST=0.0.0.0
 AI_PROVIDER=codex
-CODEX_API_KEY=your-server-side-codex-api-key
+ALLOW_CODEX_ACCOUNT_SERVER=true
 ```
 
 ## 4. View saved PDFs
