@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Turn a business brief and deterministic simulation into an evidence-backed AI business report and PDF." />
+  <title>Shadow Company · Business report generator</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <header class="topbar">
+    <button class="brand" id="go-home" type="button" aria-label="Home"><span class="brand-mark">S</span><span><b>SHADOW</b><small>COMPANY</small></span></button>
+    <div class="topbar-actions" id="workspace-actions" hidden>
+      <span class="engine-status"><i></i> Evidence engine ready</span>
+      <button class="button ghost" id="edit-company" type="button">Edit inputs</button>
+      <button class="button primary" id="generate-report" type="button">Regenerate report</button>
+    </div>
+  </header>
+
+  <section class="landing" id="landing-screen">
+    <div class="landing-copy">
+      <span class="eyebrow">AI BUSINESS ANALYSIS · CALCULATED EVIDENCE</span>
+      <h1>Your business brief,<br /><em>organized into a real report.</em></h1>
+      <p>Describe the company once. Shadow Company structures the inputs, runs three deterministic scenarios, explains what happened, and produces a decision-ready PDF—with missing evidence clearly marked.</p>
+      <div class="landing-actions">
+        <button class="button primary large" id="landing-create" type="button">Create my business report <span>→</span></button>
+        <button class="button text" id="landing-demo" type="button">View a complete example</button>
+      </div>
+      <div class="trust-row"><span><b>01</b> Editable inputs</span><span><b>02</b> Real calculations</span><span><b>03</b> No invented market data</span></div>
+    </div>
+    <div class="report-mock" aria-label="Preview of a generated business report">
+      <div class="mock-cover"><span>SHADOW COMPANY / DECISION REPORT</span><h2>Harvest &amp; Co.</h2><p>Evidence-gated snack<br />business report</p><i></i><small>10 core sections · PDF</small></div>
+      <div class="mock-page"><b>DECISION SUMMARY</b><h3>Validate the price response before scaling.</h3><div class="mock-metrics"><span><small>CONTRIBUTION</small>$18k</span><span><small>MARGIN</small>61%</span></div><p></p><p></p><p class="short"></p><div class="mock-gap">BREAK-EVEN · DEMAND RESPONSE REQUIRED</div></div>
+    </div>
+  </section>
+
+  <main class="workspace" id="report-workspace" hidden>
+    <section class="workspace-head">
+      <div><span class="eyebrow">BUSINESS REPORT WORKSPACE</span><div class="breadcrumb"><span id="company-name">COMPANY</span><i></i><span id="report-provider">REPORT ENGINE</span></div><h1 id="report-title">Business analysis report</h1><p id="report-subtitle"></p></div>
+      <aside class="download-card" id="download-card" hidden><span>REPORT READY</span><b>Decision report</b><small>10 core sections · KPIs · risks · experiment plan</small><a class="button primary" id="download-pdf" href="#">Download PDF</a><button class="button ghost" id="download-data" type="button">Download model data</button></aside>
+    </section>
+
+    <div class="report-error" id="report-error" role="alert" hidden></div>
+    <section class="report-loading" id="report-loading" aria-live="polite" aria-busy="true" hidden>
+      <div class="document-loader"><i></i><i></i><i></i></div>
+      <div><span class="eyebrow">BUILDING YOUR REPORT</span><h2 id="loading-title">Calculating three business scenarios…</h2><p id="loading-copy">Locking financial evidence before the narrative is written.</p><div class="progress"><i id="progress-bar"></i></div></div>
+      <ol><li class="active">Organize inputs</li><li>Run simulations</li><li>Write analysis</li><li>Render PDF</li></ol>
+    </section>
+
+    <div id="report-preview" hidden>
+      <section class="evidence-banner"><div><span>CALCULATION + NARRATIVE</span><b>AI explains. The simulation engine calculates.</b></div><p>Unprovided market sizes, competitors, and observed customer metrics are labeled as research gaps rather than guessed.</p></section>
+
+      <div class="report-layout">
+        <nav class="report-nav" aria-label="Report contents"><span>REPORT CONTENTS</span><a href="#executive">01 Founder verdict</a><a href="#business-idea">02 The business idea</a><a href="#comparison">03 Scenario comparison</a><a href="#findings">04 Findings and market</a><a href="#recommendations">05 What to test first</a><a href="#customer-evidence">06 Customer evidence</a><a href="#risks">07 Risk register</a><a href="#actions">08 Action plan</a><a href="#evidence-ledger">09 Assumptions to verify</a><a href="#industry-kpis">10 Metrics and detail</a></nav>
+        <article class="report-paper">
+          <section class="report-header-block" id="report-header-block"><div><span>COMPANY OR PRODUCT</span><b id="header-company"></b></div><div><span>DATE OF ANALYSIS</span><b id="header-date"></b></div><div><span>ANALYSIS PERIOD</span><b id="header-period"></b></div><div><span>DECISION STATUS</span><b id="header-status"></b></div><p id="header-question"></p></section>
+          <section class="report-section executive" id="executive"><span class="section-number">01 / EXECUTIVE SUMMARY</span><h2 id="executive-heading"></h2><p id="executive-copy"></p><div class="metric-strip" id="executive-metrics"></div><div class="decision-callout"><small>MODELED DIRECTION</small><b id="decision-direction"></b><p id="decision-rationale"></p></div></section>
+          <section class="report-section business-idea" id="business-idea"><span class="section-number">02 / THE BUSINESS IDEA</span><div class="section-title"><div><h2 id="business-overview-heading">What the business is trying to do</h2><p id="business-overview"></p></div></div><div class="idea-grid"><div><span>THE CUSTOMER PROBLEM</span><p id="problem-and-need"></p></div><div><span>WHAT MAKES IT WORTH PAYING FOR</span><p id="product-analysis"></p></div></div></section>
+          <section class="report-section" id="evidence-ledger"><span class="section-number">ASSUMPTIONS TO VERIFY</span><div class="section-title"><div><h2>What you told us, what was estimated, and what to check next</h2><p>Assumptions are normal at the idea stage. These are the few inputs most likely to change the conclusion.</p></div><strong class="evidence-rating" id="evidence-rating"></strong></div><div class="ledger-grid"><div><h3 id="user-input-count"></h3><div id="user-input-list"></div></div><div><h3 id="ai-input-count"></h3><div id="ai-input-list"></div></div></div><div class="research-sources" id="ledger-sources"></div></section>
+          <section class="report-section quality-section" id="quality"><div class="quality-score"><span>UNIVERSAL REPORT SCORE</span><strong id="quality-total">—</strong><b id="quality-classification"></b><p id="quality-use"></p></div><div><span class="section-number">EVIDENCE AND DECISION READINESS</span><h2>Where this report is strong—and where it is not</h2><div class="quality-dimensions" id="quality-dimensions"></div><ul class="quality-blockers" id="quality-blockers"></ul></div></section>
+          <section class="report-section" id="industry-kpis"><span class="section-number">METRICS AND DETAIL</span><h2>The few measures that tell you whether this idea is working</h2><div class="responsive-table"><table><thead><tr><th>Measure</th><th>What you need to know</th><th>Still missing</th><th>Current basis</th></tr></thead><tbody id="kpi-input-table"></tbody></table></div></section>
+          <section class="report-section" id="customer-evidence"><span class="section-number">06 / CUSTOMER AND BEHAVIORAL EVIDENCE</span><h2 id="customer-heading"></h2><div class="responsive-table"><table><thead><tr><th>Behavior</th><th>Value</th><th>Evidence type</th><th>Explanation</th></tr></thead><tbody id="behavior-table"></tbody></table></div></section>
+          <section class="report-section" id="comparison"><span class="section-number">03 / WHAT THE NUMBERS SAY</span><div class="section-title"><div><h2>Compare the options over the same period</h2><p id="comparison-period">Every figure below covers the same modeled period, so the options can be compared fairly.</p></div><span class="calculated-badge">MODELED</span></div><div class="scenario-report-grid" id="scenario-report-grid"></div></section>
+          <section class="report-section" id="scale-analysis" hidden><span class="section-number">USAGE AND SCALE</span><div class="section-title"><div><h2>Where the plan starts to lose money</h2><p>Monthly run-rate figures. Green is revenue; coral is AI cost; contribution is what remains after direct and fixed costs.</p></div><span class="calculated-badge">MODELED</span></div><div class="scale-chart" id="scale-chart"></div><div class="responsive-table"><table><thead><tr><th>Customer group</th><th>Assumed share</th><th>Monthly usage</th><th>AI cost / customer</th><th>Money left after direct cost</th><th>What it means</th></tr></thead><tbody id="usage-cohort-table"></tbody></table></div></section>
+          <section class="report-section split" id="findings"><div><span class="section-number">04 / KEY FINDINGS</span><h2>What the model discovered</h2><ul class="findings-list" id="findings-list"></ul></div><div class="research-gap"><span>MARKET AND TREND EVIDENCE</span><h3>Unknown stays unknown.</h3><p id="market-gap"></p><div class="trend-list" id="trend-list"></div></div></section>
+          <section class="report-section" id="risks"><span class="section-number">07 / RISK REGISTER</span><h2>Business-specific risks, warning signals, and owners</h2><div class="responsive-table"><table><thead><tr><th>Risk</th><th>Probability / impact</th><th>Early-warning signal</th><th>Owner</th></tr></thead><tbody id="risk-table"></tbody></table></div></section>
+          <section class="report-section" id="recommendations"><span class="section-number">05 / WHAT TO TEST FIRST</span><h2>A clear experiment order</h2><div class="recommendation-list" id="recommendation-list"></div></section>
+          <section class="report-section" id="actions"><span class="section-number">08 / ACTION PLAN</span><h2>Specific owners, timing, and success measures</h2><div class="responsive-table"><table><thead><tr><th>Action</th><th>Owner</th><th>Timing</th><th>Success measure</th></tr></thead><tbody id="action-table"></tbody></table></div></section>
+          <section class="report-section" id="limitations"><span class="section-number">ASSUMPTIONS / LIMITATIONS</span><h2>What this report can—and cannot—claim</h2><ul class="limitations-list" id="limitations-list"></ul><p class="disclaimer" id="report-disclaimer"></p><div class="research-sources" id="research-sources"></div></section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer><span>SHADOW COMPANY</span><span>Scenario evidence · AI-organized analysis · No guaranteed predictions</span><span>Built with Codex</span></footer>
+
+  <dialog class="setup-dialog" id="setup-dialog">
+    <form id="company-form">
+      <header class="dialog-head"><div><span class="section-number">REPORT INPUTS</span><h2>Tell us about the business</h2><p>Paste everything once, let AI organize it, then review every number before generating the report.</p></div><button class="icon-button" id="close-setup" type="button" aria-label="Close">×</button></header>
+      <div class="form-error" id="form-error" role="alert" hidden></div>
+      <div class="suggested-note" id="suggested-note" hidden><span>AI-SUGGESTED ASSUMPTIONS</span><p>Green fields were inferred from the business type and general operating patterns. They are editable starting points, not facts. Change any value and it becomes a user-provided input.</p></div>
+      <section class="brief-intake"><div class="brief-head"><div><span class="section-number">PASTE ONCE · ORGANIZE EVERYTHING</span><h3>Business brief</h3><p>Include the company, problem, product, customers, pricing, costs, usage, capacity, and goals. Written numbers are supported.</p></div><span class="provider-status" id="ai-connection">Checking AI…</span></div><textarea name="businessBrief" rows="11" maxlength="20000" placeholder="Paste your complete startup description here…"></textarea><div class="brief-actions"><button class="ai-suggest" id="ai-compile" type="button"><label class="csv-import">Import metrics CSV<input id="csv-import" type="file" accept=".csv,text/csv" /></label><p class="ai-status" id="ai-status"></p></div></section>
+      <section class="form-section"><div class="form-section-title"><span>01</span><div><h3>Company and decision</h3><p>This becomes the foundation of the report.</p></div></div><div class="form-grid">
+        <label>Company name *<input name="name" required maxlength="80" /></label><label>Industry<input name="industry" maxlength="100" /></label><label>Geography / market<input name="geography" maxlength="100" placeholder="e.g. UAE, Dubai" /></label><label>Reporting currency<select name="currency"><option value="USD">USD</option><option value="AED">AED</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></label><label>Data current through<input name="dataAsOf" type="date" /></label><label>Development stage<select name="developmentStage"><option>Idea</option><option>MVP</option><option>Early revenue</option><option>Growth</option></select></label><label>Revenue model<select name="revenueModel"><option value="subscription">Subscription</option><option value="unit_sales">One-time / unit sales</option></select></label>
+        <label class="span-2">Company description *<textarea name="description" required rows="3" maxlength="400"></textarea></label><label class="span-2">Decision to analyze *<textarea name="decisionQuestion" required rows="2" maxlength="240"></textarea></label><label>Customer profile<input name="customerProfile" /></label><label>Usage or sales unit *<input name="unitName" required /></label>
+      </div></section>
+      <section class="form-section"><div class="form-section-title"><span>02</span><div><h3>Pricing or purchase tiers</h3><p>For unit sales, use the effective selling price per item.</p></div></div><div class="plans-table" id="plans-form"></div></section>
+      <section class="form-section"><div class="form-section-title"><span>03</span><div><h3>Operating assumptions</h3><p>These directly drive the financial and operational results.</p></div></div><div class="form-grid three"><label>Starting cash ($)<input name="startingCash" type="number" min="0" step="100" required /></label><label>Fixed costs / month ($)<input name="fixedMonthlyCosts" type="number" min="0" step="100" required /></label><label><span id="variable-cost-label">Variable cost / unit ($)</span><input name="variableCostPerUnit" type="number" min="0" step="0.0001" required /></label><label><span id="average-usage-label">Average usage / customer / day</span><input name="averageDailyUsage" type="number" min="0.01" step="0.01" required /></label><label><span id="high-usage-label">High-volume usage / day</span><input name="highVolumeDailyUsage" type="number" min="0.01" step="0.01" required /></label><label>New customers / day<input name="dailyCustomerArrivals" type="number" min="0.05" step="0.05" required /></label><label>Support capacity / week<input name="supportHoursPerWeek" type="number" min="1" step="1" required /></label></div></section>
+      <section class="form-section" id="industry-model-section" hidden><div class="form-section-title"><span>04</span><div><h3>Hotel operating model</h3><p>These inputs constrain the analysis by physical room inventory and hotel economics.</p></div></div><div class="form-grid three"><label>Number of properties<input name="capacityLocations" type="number" min="1" step="1" /></label><label>Rooms per property<input name="capacityPerLocation" type="number" min="1" step="1" /></label><label>Baseline occupancy (%)<input name="baselineUtilization" type="number" min="1" max="100" step="0.1" /></label><label>Current ADR ($)<input name="averageSellingPrice" type="number" min="1" step="1" /></label><label>Average length of stay<input name="averageTransactionLength" type="number" min="0.1" step="0.1" /></label><label>Cancellation rate (%)<input name="cancellationRate" type="number" min="0" max="100" step="0.1" /></label><label>Direct-booking share (%)<input name="directChannelShare" type="number" min="0" max="100" step="0.1" /></label><label>Third-party commission (%)<input name="thirdPartyFeeRate" type="number" min="0" max="100" step="0.1" /></label><label>Price elasticity estimate<input name="priceElasticity" type="number" min="0" step="0.1" /></label></div><div class="model-warning">A value suggested by AI remains low-confidence until replaced with property records. The report will not declare a winner while critical hotel inputs are unverified.</div></section>
+      <section class="form-section" id="subscription-model-section" hidden><div class="form-section-title"><span>04</span><div><h3>AI subscription economics</h3><p>Define customer behavior and direct AI-delivery costs. AI can suggest these values, but they remain editable assumptions.</p></div></div><div class="form-grid three"><label>Current paying accounts<input name="startingPaidCustomers" type="number" min="0" step="1" /></label><label>Monthly paid churn (%)<input name="monthlyChurnRate" type="number" min="0" max="100" step="0.1" /></label><label>Paid conversion (%)<input name="paidConversionRate" type="number" min="0" max="100" step="0.1" /></label><label>Payment processing (%)<input name="paymentProcessingRate" type="number" min="0" max="100" step="0.1" /></label><label>Refund / credit rate (%)<input name="refundRate" type="number" min="0" max="100" step="0.1" /></label><label>Failed or retried tasks (%)<input name="failedTaskRate" type="number" min="0" max="100" step="0.1" /></label><label>Customer acquisition cost ($)<input name="customerAcquisitionCost" type="number" min="0" step="1" /></label><label>Target gross margin (%)<input name="targetGrossMargin" type="number" min="1" max="99" step="0.1" /></label><label>Price elasticity estimate<input name="subscriptionPriceElasticity" type="number" min="0" step="0.1" /></label></div><div class="model-warning">The report will separate observed values from AI suggestions and will not approve pricing while unit definition, cost reconciliation, churn, or demand response remain unverified.</div></section>
+      <section class="form-section"><div class="form-section-title"><span>05</span><div><h3>Analysis controls</h3><p>The period determines available room-nights; the seed remains available for general simulation evidence.</p></div></div><div class="form-grid three"><label>Synthetic customers<input name="customerTarget" type="number" min="10" max="5000" required /></label><label>Duration in days<input name="durationDays" type="number" min="30" max="730" required /></label><label>Seed<input name="seed" type="number" min="1" required /></label></div></section>
+      <footer class="dialog-footer"><span id="saved-note">Stored only in this browser</span><button class="button ghost" id="cancel-setup" type="button">Cancel</button><button class="button primary" type="submit">Generate business report</button></footer>
+    </form>
+  </dialog>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "id": "docuflow",
+  "name": "DocuFlow",
+  "description": "An AI document-processing API that turns uploaded documents into structured JSON.",
+  "startingCash": 125000,
+  "fixedMonthlyCosts": 28000,
+  "variableCostPerUnit": 0.006,
+  "plans": [
+    { "id": "free", "name": "Free", "monthlyPrice": 0, "includedUnits": 1000, "rateLimit": 1000 },
+    { "id": "starter", "name": "Starter", "monthlyPrice": 19, "includedUnits": null, "rateLimit": null },
+    { "id": "business", "name": "Business", "monthlyPrice": 79, "includedUnits": null, "rateLimit": null }
+  ],
+  "cohorts": ["free-explorer", "indie-dev", "small-agency", "high-volume", "enterprise-evaluator"],
+  "team": ["founder", "engineer-1", "engineer-2"]
+}
