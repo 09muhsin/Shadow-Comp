@@ -45,8 +45,8 @@ Also keep the standard public-app variables:
 
 ```text
 HOST=0.0.0.0
-AI_PROVIDER=openai
-OPENAI_API_KEY=your-server-side-openai-key
+AI_PROVIDER=codex
+CODEX_API_KEY=your-server-side-codex-api-key
 ```
 
 ## 4. View saved PDFs

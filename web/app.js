@@ -82,7 +82,7 @@ function renderReport(data) {
   $('header-period').textContent = evidence.reportHeader.analysisPeriod;
   $('header-status').textContent = confidence.decisionStatus;
   $('header-question').textContent = evidence.reportHeader.decisionQuestion;
-  $('report-provider').textContent = data.provider === 'codex-account' ? 'CODEX ACCOUNT' : data.provider === 'openai-api' ? 'OPENAI API' : evidence.research?.status === 'completed' ? 'INDUSTRY MODEL + SOURCED RESEARCH' : 'EVIDENCE-GATED INDUSTRY MODEL';
+  $('report-provider').textContent = data.provider === 'codex-account' ? 'CODEX ACCOUNT' : data.provider === 'codex-api' ? 'CODEX API' : data.provider === 'openai-api' ? 'OPENAI API' : evidence.research?.status === 'completed' ? 'INDUSTRY MODEL + SOURCED RESEARCH' : 'EVIDENCE-GATED INDUSTRY MODEL';
   $('executive-heading').textContent = industryAnalysis?.category === 'subscription' ? 'Validate before deciding: fix the pricing risk before you scale it.' : confidence.evidenceRating === 'Directional' ? 'Validate before deciding.' : confidence.evidenceRating === 'Partially Validated' ? 'A provisional direction may be tested, not treated as final.' : industryAnalysis?.recommendation || evidence.recommendation.recommendation;
   $('executive-copy').textContent = narrative.executiveSummary;
   const executiveMetrics = industryAnalysis?.category === 'hospitality' ? [['AVAILABLE ROOM-NIGHTS', industryAnalysis.capacity.availableUnits.toLocaleString()], ['BASELINE OCCUPANCY', percent(industryAnalysis.scenarios[0].utilization)], ['ADR', money(industryAnalysis.scenarios[0].averagePrice)], ['BREAK-EVEN DECLINE', percent(industryAnalysis.breakEvenVolumeDecline)]] : industryAnalysis?.category === 'subscription' ? [['MODELED PAID ACCOUNTS', industryAnalysis.baseline.paidAccounts.toLocaleString()], ['TYPICAL AI COST / ACCOUNT', money(industryAnalysis.scenarios[0].aiCostPerAccount)], ['LOSS-MAKING USER GROUPS', String(industryAnalysis.usageCohorts.filter((item) => !item.profitable).length)], ['FIRST TEST RETENTION FLOOR', percent(industryAnalysis.commercialRetentionGuardrail)]] : [['MODELED CONTRIBUTION', money(winner.metrics.endingCash - evidence.operatingModel.startingCash)], ['GROSS MARGIN', percent(winner.metrics.grossMargin)], ['CUSTOMERS', winner.metrics.customers.toLocaleString()], ['CONFIDENCE', evidence.recommendation.confidence.toUpperCase()]];
@@ -216,9 +216,9 @@ function saveCompany(event) {
 async function updateProviderStatus() {
   try {
     const response = await fetch('/api/status'); const status = await response.json();
-    const labels = { codex: 'CODEX ACCOUNT MODE', openai: 'OPENAI API MODE', local: 'LOCAL REPORT MODE' };
+    const labels = { codex: status.codexApiMode ? 'CODEX API MODE' : 'CODEX ACCOUNT MODE', openai: 'OPENAI API MODE', local: 'LOCAL REPORT MODE' };
     $('ai-connection').textContent = labels[status.aiProvider] || String(status.aiProvider).toUpperCase();
-    $('ai-status').textContent = status.aiProvider === 'codex' ? 'Codex will organize the brief and attempt focused live research. Slow research times out safely without blocking the calculated report.' : status.aiProvider === 'openai' ? 'The OpenAI Responses API will organize inputs and run hosted web search with clickable sources.' : 'The deterministic organizer and industry KPI profiles are active. No external research will run.';
+    $('ai-status').textContent = status.aiProvider === 'codex' ? (status.codexApiMode ? 'Codex API will organize the brief and run focused live research from this hosted service.' : 'Codex will organize the brief and attempt focused live research. Slow research times out safely without blocking the calculated report.') : status.aiProvider === 'openai' ? 'The OpenAI Responses API will organize inputs and run hosted web search with clickable sources.' : 'The deterministic organizer and industry KPI profiles are active. No external research will run.';
   } catch { $('ai-connection').textContent = 'REPORT ENGINE UNAVAILABLE'; }
 }
 
@@ -238,7 +238,7 @@ async function organizeBrief() {
     updateUnitLabels(model.unitName);
     suggestedFields = new Set(model.suggestedFields || []); markSuggestedFields([...suggestedFields]);
     $('ai-status').textContent = `The complete form was organized by ${data.model}. Review every value, then generate the report.${data.fallbackReason ? ` Local fallback reason: ${data.fallbackReason}` : ''}`; $('ai-status').className = 'ai-status success';
-    $('ai-connection').textContent = data.provider === 'codex-account' ? 'CODEX ACCOUNT CONNECTED' : data.provider === 'openai-api' ? 'OPENAI API CONNECTED' : 'LOCAL ORGANIZER';
+    $('ai-connection').textContent = data.provider === 'codex-account' ? 'CODEX ACCOUNT CONNECTED' : data.provider === 'codex-api' ? 'CODEX API CONNECTED' : data.provider === 'openai-api' ? 'OPENAI API CONNECTED' : 'LOCAL ORGANIZER';
   } catch (error) { $('ai-status').textContent = error.message; $('ai-status').className = 'ai-status error'; } finally { $('ai-compile').disabled = false; }
 }
 

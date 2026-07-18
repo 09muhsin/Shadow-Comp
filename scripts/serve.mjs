@@ -226,9 +226,9 @@ async function researchWithOpenAI(companyInput) {
 }
 
 async function researchWithCodex(companyInput) {
-  if (!["127.0.0.1", "localhost", "::1"].includes(host) && process.env.ALLOW_CODEX_ACCOUNT_SERVER !== "true") throw new Error("Codex-account research is restricted to localhost.");
+  if (!["127.0.0.1", "localhost", "::1"].includes(host) && !process.env.CODEX_API_KEY) throw new Error("Public Codex mode requires CODEX_API_KEY. Local Codex-account mode is restricted to localhost.");
   const { Codex } = await import("@openai/codex-sdk");
-  const codex = new Codex();
+  const codex = new Codex(process.env.CODEX_API_KEY ? { apiKey: process.env.CODEX_API_KEY } : undefined);
   const geography = companyInput.geography ? ` in ${companyInput.geography}` : "";
   const query = `${companyInput.name || "Business"}: ${companyInput.industry || "industry"}${geography} trends, benchmarks, KPIs, pricing, capacity, channels, and risks relevant to ${companyInput.decisionQuestion || "the stated decision"}`;
   const thread = codex.startThread({ workingDirectory: projectRoot, skipGitRepoCheck: true, sandboxMode: "read-only", approvalPolicy: "never", networkAccessEnabled: true, webSearchMode: "live", modelReasoningEffort: "medium" });
@@ -268,14 +268,14 @@ async function compileWithOpenAI(description) {
 }
 
 async function compileWithCodex(description) {
-  if (!["127.0.0.1", "localhost", "::1"].includes(host) && process.env.ALLOW_CODEX_ACCOUNT_SERVER !== "true") {
-    throw new Error("Codex-account mode is restricted to localhost. Use API billing for public deployments.");
+  if (!["127.0.0.1", "localhost", "::1"].includes(host) && !process.env.CODEX_API_KEY) {
+    throw new Error("Public Codex mode requires CODEX_API_KEY. Local Codex-account mode is restricted to localhost.");
   }
   const { Codex } = await import("@openai/codex-sdk");
-  const codex = new Codex();
+  const codex = new Codex(process.env.CODEX_API_KEY ? { apiKey: process.env.CODEX_API_KEY } : undefined);
   const thread = codex.startThread({ workingDirectory: projectRoot, skipGitRepoCheck: true, sandboxMode: "read-only", approvalPolicy: "never", networkAccessEnabled: false, modelReasoningEffort: "medium" });
   const result = await thread.run(`Organize this complete business brief into the requested model. Extract every explicit company, price, cost, usage, capacity, customer, and simulation value. Support subscription and physical unit-sales businesses. For unit_sales purchase tiers, return the effective selling price per usage unit in monthlyPrice rather than the total package price. Infer only genuinely missing fields. Do not modify files, run commands, browse, or calculate outcome metrics.\n\n${description}`, { outputSchema: businessModelSchema });
-  return { configured: true, provider: "codex-account", model: "Codex account", modelOutput: JSON.parse(result.finalResponse), usage: result.usage };
+  return { configured: true, provider: process.env.CODEX_API_KEY ? "codex-api" : "codex-account", model: process.env.CODEX_API_KEY ? "Codex API" : "Codex account", modelOutput: JSON.parse(result.finalResponse), usage: result.usage };
 }
 
 const reportWritingRules = `Write a concise, decision-ready business report narrative from the supplied evidence packet.
@@ -307,12 +307,12 @@ async function writeReportWithOpenAI(evidence) {
 }
 
 async function writeReportWithCodex(evidence) {
-  if (!["127.0.0.1", "localhost", "::1"].includes(host) && process.env.ALLOW_CODEX_ACCOUNT_SERVER !== "true") throw new Error("Codex-account mode is restricted to localhost. Use API billing for public deployments.");
+  if (!["127.0.0.1", "localhost", "::1"].includes(host) && !process.env.CODEX_API_KEY) throw new Error("Public Codex mode requires CODEX_API_KEY. Local Codex-account mode is restricted to localhost.");
   const { Codex } = await import("@openai/codex-sdk");
-  const codex = new Codex();
+  const codex = new Codex(process.env.CODEX_API_KEY ? { apiKey: process.env.CODEX_API_KEY } : undefined);
   const thread = codex.startThread({ workingDirectory: projectRoot, skipGitRepoCheck: true, sandboxMode: "read-only", approvalPolicy: "never", networkAccessEnabled: false, modelReasoningEffort: "medium" });
   const result = await thread.run(`${reportWritingRules}\nDo not inspect or change any file and do not run commands. Return only the requested structured report.\n\nEVIDENCE PACKET:\n${JSON.stringify(evidence)}`, { outputSchema: reportNarrativeSchema });
-  return { provider: "codex-account", model: "Codex account", narrative: JSON.parse(result.finalResponse), usage: result.usage };
+  return { provider: process.env.CODEX_API_KEY ? "codex-api" : "codex-account", model: process.env.CODEX_API_KEY ? "Codex API" : "Codex account", narrative: JSON.parse(result.finalResponse), usage: result.usage };
 }
 
 function writeReportLocally(evidence, fallbackReason) {
@@ -385,7 +385,7 @@ const server = createServer(async (request, response) => {
     if (pathname.startsWith("/api/") && request.method !== "GET" && !authorized(request)) return sendJson(response, 401, { error: "Authorization is required for this deployment." });
     if (request.method === "GET" && pathname === "/api/status") {
       const selected = String(process.env.AI_PROVIDER || (process.env.OPENAI_API_KEY ? "openai" : "local")).toLowerCase();
-      return sendJson(response, 200, { ok: true, simulationEngine: "deterministic", aiProvider: selected, codexAccountMode: selected === "codex", apiKeyMode: selected === "openai", webResearch: selected === "codex" || selected === "openai", reportCapacity: { active: activeReportJobs, maximum: MAX_CONCURRENT_REPORTS }, authenticatedDeployment: Boolean(apiKey) });
+      return sendJson(response, 200, { ok: true, simulationEngine: "deterministic", aiProvider: selected, codexAccountMode: selected === "codex" && !process.env.CODEX_API_KEY, codexApiMode: selected === "codex" && Boolean(process.env.CODEX_API_KEY), apiKeyMode: selected === "openai", webResearch: selected === "codex" || selected === "openai", reportCapacity: { active: activeReportJobs, maximum: MAX_CONCURRENT_REPORTS }, authenticatedDeployment: Boolean(apiKey) });
     }
     if (request.method === "POST" && pathname === "/api/compile") {
       const input = await readJson(request);
