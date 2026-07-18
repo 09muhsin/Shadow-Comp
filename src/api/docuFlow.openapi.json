@@ -1,0 +1,32 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DocuFlow Sandbox API",
+    "version": "1.0.0",
+    "description": "Offline fictional API used for Shadow Company synthetic journeys."
+  },
+  "servers": [{ "url": "https://sandbox.docuflow.invalid" }],
+  "paths": {
+    "/v1/documents": {
+      "post": {
+        "operationId": "uploadDocument",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DocumentUpload" } } } },
+        "responses": { "201": { "description": "Document accepted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Document" } } } } }
+      }
+    },
+    "/v1/documents/{documentId}/process": {
+      "post": {
+        "operationId": "processDocument",
+        "parameters": [{ "name": "documentId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Structured document result", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProcessingResult" } } } } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DocumentUpload": { "type": "object", "required": ["customerId", "pages"], "properties": { "customerId": { "type": "string" }, "pages": { "type": "integer", "minimum": 1 } } },
+      "Document": { "type": "object", "required": ["id", "pages", "status"], "properties": { "id": { "type": "string" }, "pages": { "type": "integer" }, "status": { "type": "string", "enum": ["uploaded"] } } },
+      "ProcessingResult": { "type": "object", "required": ["documentId", "status", "fields"], "properties": { "documentId": { "type": "string" }, "status": { "type": "string", "enum": ["processed"] }, "fields": { "type": "object", "additionalProperties": { "type": "string" } } } }
+    }
+  }
+}
